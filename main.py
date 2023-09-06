@@ -6,6 +6,15 @@ fake = Faker()
 app = Flask(__name__)
 
 
+# 1
+@app.get('/requirements')
+def req():
+    file = open('requirements.txt', 'r', encoding='utf-8')
+    list_info = file.readlines()
+    res = Response(''.join(list_info), content_type='text/plain')
+    return res
+
+
 # 2
 @app.get("/generate-users/")
 def generate():
@@ -26,13 +35,16 @@ def generate():
 def mean():
     file = open('hw.csv', 'r', encoding='utf-8')
     info = file.readlines()
-    list_res = []
+    list_height = []
+    list_weight = []
     for el in info[1:]:
         elem = el.strip('\n').split(',')
         if not len(elem) < 3:
-            list_res.append(f'Index - {elem[0]}, height - {round(float(elem[1]) * 2.54, 2)},'
-                            f' weight - {round(float(elem[2]) * 0.454, 2)}')
-    res = Response('\n'.join(list_res), content_type='text/plain')
+            list_height.append(round(float(elem[1]) * 2.54, 2))
+            list_weight.append(round(float(elem[2]) * 0.454, 2))
+    result = (f'Average height - {round(sum(list_height) / len(list_height), 2)} cm'
+              f'\nAverage weight - {round(sum(list_weight) / len(list_weight), 2)} kg')
+    res = Response(result, content_type='text/plain')
     return res
 
 
